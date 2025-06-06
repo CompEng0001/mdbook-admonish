@@ -6,7 +6,7 @@ jobs:
   # Fast test before we kick off all the other jobs
   fast-test:
     name: Fast test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
   detailed-test:
     needs: fast-test
     name: Test main target
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -50,6 +50,8 @@ jobs:
         with:
           toolchain: stable
           components: rustfmt, clippy
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install node toolchain
         uses: actions/setup-node@v4
         with:
@@ -70,16 +72,16 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-24.04
         rust:
           - stable
           - beta
-          - 1.76.0
+          - 1.82.0
         experimental:
           - false
         include:
           # Run a canary test on nightly that's allowed to fail
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             rust: nightly
             experimental: true
           # Test only stable on Windows, presume we'd get same result on other
@@ -89,7 +91,7 @@ jobs:
             experimental: false
         exclude:
           # Don't bother retesting stable linux, we did it in the comprehensive test
-          - os: ubuntu-20.04
+          - os: ubuntu-24.04
             rust: stable
             experimental: false
     runs-on: ${{ matrix.os }}
