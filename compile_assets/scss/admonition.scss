@@ -92,8 +92,9 @@ $admonitions: (
     0 0.2rem 1rem rgba(0, 0, 0, 0.05),
     0 0 0.1rem rgba(0, 0, 0, 0.1);
 
-  // [print]: Omit shadow as it may lead to rendering errors
+  // During print mode in browser, pdf renderer
   @media print {
+    // Omit shadow as it may lead to rendering errors
     box-shadow: none;
   }
 
@@ -197,6 +198,14 @@ a.admonition-anchor-link {
   // Show anchor link on hover over title
   &:hover a.admonition-anchor-link {
     display: initial;
+  }
+}
+
+// During print mode in browser, pdf renderer
+@media print {
+  // Expand collapsed sections to show details
+  details.admonition::details-content {
+    display: contents;
   }
 }
 
