@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.20.0
+
+### Changed
+
+- MSRV (minimum supported rust version) is now 1.82.0 ([#227](https://github.com/tommilligan/mdbook-admonish/pull/227))
+- Collapsible blocks now show content in print view ([#228](https://github.com/tommilligan/mdbook-admonish/pull/228)). Thanks to [@igor-petruk](https://github.com/igor-petruk) for raising this issue.
+
 ## v1.19.0
 
 ### Changed
