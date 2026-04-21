@@ -1,0 +1,51 @@
+name: Release mdbook-admonish
+
+on:
+  push:
+    tags:
+      - "v*"
+permissions:
+  contents: write  # <-- REQUIRED for releases
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Add musl target
+        run: rustup target add x86_64-unknown-linux-musl
+
+      - name: Build statically linked binary (musl)
+        run: cargo build --release --target x86_64-unknown-linux-musl
+
+      - name: Prepare dist
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/x86_64-unknown-linux-musl/release/mdbook-admonish dist/mdbook-admonish-linux
+          cd dist
+          tar -czf mdbook-admonish-linux.tar.gz mdbook-admonish-linux
+          sha256sum mdbook-admonish-linux > mdbook-admonish-linux_sha256sum.txt
+          sha256sum mdbook-admonish-linux.tar.gz > mdbook-admonish-linux.tar.gz_sha256sum.txt
+
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/mdbook-admonish-linux
+            dist/mdbook-admonish-linux.tar.gz
+            dist/mdbook-admonish-linux_sha256sum.txt
+            dist/mdbook-admonish-linux.tar.gz_sha256sum.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+
+      - name: Move 'latest' tag to this release
+        uses: EndBug/latest-tag@latest
+        with:
+            # default ref is 'latest' so this line is optional:
+            ref: latest
